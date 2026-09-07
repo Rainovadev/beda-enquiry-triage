@@ -1,0 +1,15 @@
+{
+  "name": "beda-enquiry-triage",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "run:pipeline": "node src/cli.js run",
+    "report": "node src/cli.js report",
+    "audit": "node src/cli.js audit"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.0.0",
+    "express": "^4.19.2"
+  }
+}

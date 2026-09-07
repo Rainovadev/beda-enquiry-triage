@@ -1,0 +1,22 @@
+[
+  {
+    "id": "DOC003",
+    "filename": "03_greenfields_invoice_query.txt",
+    "supplied": true,
+    "body": "Purchase order GF PO 8821: $47,300 ex GST\nInvoice 1847: $49,940 ex GST\nProject: Geelong LED upgrade\nAccounts requests reconciliation before payment."
+  },
+  {
+    "id": "DOC001",
+    "filename": "01_hume_energy_bill.txt",
+    "supplied": false,
+    "body": null,
+    "note": "Referenced by E001 but not present in the supplied data pack."
+  },
+  {
+    "id": "DOC002",
+    "filename": "02_northbank_site_notes.txt",
+    "supplied": false,
+    "body": null,
+    "note": "Referenced by E005 but not present in the supplied data pack."
+  }
+]

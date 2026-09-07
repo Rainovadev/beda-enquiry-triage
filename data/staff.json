@@ -1,0 +1,6 @@
+[
+  { "name": "Matt Cooper",     "role": "Founder",                          "owns": ["major_commercial_opportunity", "strategic_partnership"] },
+  { "name": "Ties Rahardjo",   "role": "Executive Operations Coordinator", "owns": ["scheduling", "administration", "logistics", "general_operations"] },
+  { "name": "Zidane Mouldino", "role": "Marketing and Growth Coordinator", "owns": ["marketing", "website", "inbound_growth"] },
+  { "name": "Ali Pratama",     "role": "Senior Business Analyst",          "owns": ["crm", "systems", "data", "workflows", "infrastructure"] }
+]
