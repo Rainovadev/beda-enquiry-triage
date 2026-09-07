@@ -4,8 +4,6 @@ Ingests the supplied enquiries, classifies them, extracts structured fields, res
 identity against the CRM seed, decides a next action, drafts a reply, and holds every
 consequential action for human approval. Everything it does is written to an audit log.
 
-**Build time:** started HH:MM, finished HH:MM WIB (see *Unfinished* at the end).
-
 ## Run it
 
 ```bash
@@ -15,11 +13,12 @@ npm run run:pipeline     # process all 12 enquiries and print a summary
 npm start                # review UI on http://localhost:3000
 ```
 
-No API key is needed. `LLM_MODE=fixture` (the default) replays stored model output so
-the pipeline is fully runnable offline; the code below the model is identical either way.
-To use a live model, set `LLM_MODE=live` and `OPENROUTER_API_KEY` in `.env`.
+No API key is needed. `LLM_MODE=fixture` (the default) replays stored classification
+output so the pipeline is fully runnable offline; the code below the model is identical
+either way. To use a live model, set `LLM_MODE=live` and `OPENROUTER_API_KEY` in `.env`.
 
-Also available: `npm run audit` for the full trail, `node src/cli.js audit E010` for one enquiry.
+Also available: `npm run audit` for the full trail, `node src/cli.js audit E010` for one
+enquiry, and `npm test` for the delivery tests.
 
 ## Architecture
 
@@ -80,20 +79,73 @@ Rewriting them would mean source-span verification was checking text I had autho
 - Claude (Anthropic) for design discussion and code drafting.
 - `openai/gpt-4o-mini` via OpenRouter for classification and extraction in live mode,
   chosen because the task has a fixed schema and a larger model does not change the answer.
-- Fixture mode ships stored output of that same prompt so the system runs without a key.
+- The shipped fixtures are hand-written expected outputs for that prompt, not captured
+  model responses. They exist so the pipeline is runnable and reviewable without a key,
+  and they double as a written specification of what correct classification looks like
+  for this data pack.
+
+## Delivery of consequential actions
+
+Added after submission, in response to the timeout-after-commit question.
+
+Anything that leaves the system (`send_reply`, `request_information`, `create_crm_record`,
+`update_crm_record`) goes through an outbox ledger in `src/outbox.js` rather than being
+called inline. The row is written **before** the request is sent, so a process that dies
+mid-request still leaves evidence that a request may have gone out.
+
+```
+PENDING -> IN_FLIGHT -> SUCCEEDED      response received
+                     -> FAILED_SAFE    rejected before commit, retry is safe
+                     -> UNKNOWN        sent, outcome never observed
+
+UNKNOWN -> SUCCEEDED    reconciliation found the commit
+        -> FAILED_SAFE  reconciliation proved nothing committed
+        -> UNKNOWN      reconciliation itself failed; stays unknown
+```
+
+`UNKNOWN` is a real outcome, not a label for "probably failed". A timeout after the
+request was accepted means the action may already have happened, so treating it as
+failure risks sending a customer the same email twice, and treating it as success risks
+telling a reviewer something was sent when it was not.
+
+The idempotency key is `sha256(enquiry_id | action_type | canonical payload)`. It contains
+no timestamp, attempt number or random value, so a retry of the same action produces the
+same key, and the external service can reject the duplicate itself. On retry the system
+never re-sends an `UNKNOWN` action: it asks the service what happened for that key first.
+
+The approval token survives an `UNKNOWN` outcome, so the action stays in the queue and a
+reviewer never has to approve the same thing twice. `unresolvedOps()` lists everything
+still unresolved; nothing leaves that state on its own.
+
+`npm test` covers six cases, including timeout-after-commit, retry after unknown, and a
+retry while the service is still unreachable.
 
 ## Known weaknesses
 
-- Fixture mode is the default, so the classifier is not exercised on every run. Live mode
-  works but is not covered by tests.
-- No automated tests. Behaviour was verified by reading the audit log for each enquiry.
+- Tests cover the outbox and delivery states only. The rest of the deterministic core
+  (normalisation, dedupe, invoice reconciliation) is still verified by reading the audit
+  log rather than by assertions.
+- Reconciliation depends on the external service exposing a lookup by idempotency key.
+  A provider without one would need a different strategy, such as searching recent
+  messages by recipient and subject.
+- Fixture mode is the default, so the model is not called on a normal run. Live mode is
+  implemented with retries, JSON validation and a degrade-to-human path, but has only been
+  lightly exercised. The fixtures encode what the prompt is expected to return, so a live
+  run could diverge from them and that gap has not been measured.
 - Company-name matching uses a trigram score with a hand-set threshold that has not been
   tuned against real data.
-- Draft templates cover the categories in this data pack and would need extending.
+- Draft templates cover only the categories present in this data pack.
+- The reply draft is rendered twice in the UI, once on the `draft_reply` card and again on
+  `send_reply`. Correct as data, repetitive on screen.
 - CRM and mail executors are stubs; nothing is actually written or sent.
 - Approval identity is a name in a request body. Real deployment needs authenticated
   reviewers and per-role permissions.
 - Single-process, in-order pipeline. Fine for 12 items, not for a real inbox.
+
+One bug found and fixed during testing: an earlier version put internal attachment
+filenames into customer-facing drafts, so a reply asked Amelia to send
+`01_hume_energy_bill.txt`. Filenames are now filtered out of anything a customer reads
+while staying in the reviewer's missing list and the audit trail.
 
 ## With another day
 
@@ -103,7 +155,3 @@ Rewriting them would mean source-span verification was checking text I had autho
 3. Live-model drafting constrained to verified fields, with a diff against the template
    version so the model's additions are visible before sending.
 4. A reviewer queue ordered by priority and age rather than by enquiry ID.
-
-## Unfinished
-
-_(state what you stopped on at the 3-hour mark)_

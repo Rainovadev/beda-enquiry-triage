@@ -2,8 +2,11 @@ import Database from 'better-sqlite3';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-export const db = new Database(path.join(root, 'beda.db'));
+
+const dbPath = process.env.BEDA_DB || path.join(root, 'beda.db');
+export const db = new Database(dbPath);
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 

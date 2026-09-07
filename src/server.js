@@ -54,9 +54,9 @@ app.get('/api/policy', (_req, res) => res.json(POLICY));
  * Approval is checked against the token stored with the action. The client sends the
  * token back, but it is compared server side and cleared once used.
  */
-app.post('/api/actions/:id/approve', (req, res) => {
+app.post('/api/actions/:id/approve', async (req, res) => {
   try {
-    res.json(approve(Number(req.params.id), req.body.token, req.body.approver || 'reviewer'));
+    res.json(await approve(Number(req.params.id), req.body.token, req.body.approver || 'reviewer'));
   } catch (err) { res.status(400).json({ error: err.message }); }
 });
 

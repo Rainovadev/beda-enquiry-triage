@@ -6,7 +6,8 @@
     "start": "node src/server.js",
     "run:pipeline": "node src/cli.js run",
     "report": "node src/cli.js report",
-    "audit": "node src/cli.js audit"
+    "audit": "node src/cli.js audit",
+    "test": "node --test test/*.test.js"
   },
   "dependencies": {
     "better-sqlite3": "^11.0.0",
