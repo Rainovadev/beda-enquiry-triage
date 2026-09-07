@@ -1,0 +1,138 @@
+{
+  "E001": {
+    "category": "sales_opportunity",
+    "fields": {
+      "contact_name":        { "value": "Amelia Grant",       "source_span": "Amelia Grant" },
+      "contact_phone":       { "value": "0400 111 020",       "source_span": "Please call me on 0400 111 020" },
+      "sites":               { "value": "Truganina, Dandenong, Epping", "source_span": "We operate warehouses in Truganina, Dandenong and Epping" },
+      "annual_consumption":  { "value": "about 2.1 GWh per year", "source_span": "Combined electricity consumption is about 2.1 GWh per year" },
+      "product_interest":    { "value": "solar, batteries, lighting upgrades", "source_span": "We are considering solar, possibly batteries and lighting upgrades" },
+      "timeline":            { "value": "next week",          "source_span": "We would like an initial discussion next week" }
+    },
+    "missing": ["site_electricity_bill"],
+    "notes": "Multi-site commercial solar and battery enquiry with stated consumption and a requested meeting."
+  },
+
+  "E002": {
+    "category": "sales_opportunity",
+    "fields": {
+      "company":            { "value": "Hume Logistic",  "source_span": "Company: Hume Logistic" },
+      "contact_name":       { "value": "Amelia",         "source_span": "Contact Amelia" },
+      "contact_phone":      { "value": "0400 111 020",   "source_span": "Best number 0400 111 020" },
+      "sites":              { "value": "three distribution sites in Melbourne", "source_span": "We have three distribution sites in Melbourne" },
+      "annual_consumption": { "value": "around two gigawatt hours annually", "source_span": "Consumption around two gigawatt hours annually" },
+      "product_interest":   { "value": "solar proposal",  "source_span": "want a solar proposal" }
+    },
+    "missing": ["contact_full_name"],
+    "notes": "Web form version of what appears to be the same request as E001; company name spelling differs from the CRM."
+  },
+
+  "E003": {
+    "category": "support_request",
+    "fields": {
+      "contact_name":     { "value": "Rohan Lee",   "source_span": "Rohan Lee" },
+      "reference_number": { "value": "1847",        "source_span": "invoice 1847" },
+      "amount_disputed":  { "value": "$2,640",      "source_span": "invoice 1847 is $2,640 higher than the purchase order" },
+      "deadline":         { "value": "before Friday", "source_span": "Can someone check before Friday please" },
+      "location":         { "value": "Geelong",     "source_span": "lighting project already completed at Geelong" }
+    },
+    "missing": [],
+    "notes": "Billing discrepancy on a completed project. Existing client, not a new opportunity."
+  },
+
+  "E004": {
+    "category": "junk",
+    "fields": {},
+    "missing": [],
+    "notes": "Unsolicited lead-list sales with an artificial deadline and a cryptocurrency payment request."
+  },
+
+  "E005": {
+    "category": "sales_opportunity",
+    "fields": {
+      "company":          { "value": "Northbank College", "source_span": "I manage facilities at Northbank College" },
+      "contact_name":     { "value": "Melissa Tran",      "source_span": "Melissa Tran" },
+      "sites":            { "value": "approximately 1,100 fluorescent fittings", "source_span": "We have approximately 1,100 fluorescent fittings" },
+      "product_interest": { "value": "LED upgrade",       "source_span": "want to understand whether an LED upgrade could access any government incentives" }
+    },
+    "missing": ["electricity_bill", "site_address", "organisation_funding_type"],
+    "notes": "LED upgrade enquiry asking about government incentives. The message does not state whether the college is government funded, so eligibility cannot be assessed from what was supplied."
+  },
+
+  "E006": {
+    "category": "technical_question",
+    "fields": {
+      "product_interest": { "value": "500 kW battery project", "source_span": "We are reviewing the PCS specification on a 500 kW battery project" }
+    },
+    "missing": ["project_owner", "site_details"],
+    "notes": "Engineering question about THD limits and whether a harmonic study is required. Needs an electrical engineer to answer."
+  },
+
+  "E007": {
+    "category": "recruitment",
+    "fields": {
+      "contact_email": { "value": "priya.dev@examplemail.test", "source_span": "priya.dev@examplemail.test" }
+    },
+    "missing": ["applicant_name", "cv", "role_applied_for"],
+    "notes": "Internship application. Not a sales or support enquiry and should not enter the sales pipeline."
+  },
+
+  "E008": {
+    "category": "partner_operations",
+    "fields": {
+      "contact_name":     { "value": "Daniel Wu", "source_span": "Existing installation partner Daniel Wu" },
+      "location":         { "value": "Ballarat",  "source_span": "a Ballarat commercial solar project" },
+      "timeline":         { "value": "week beginning 14 September", "source_span": "for the week beginning 14 September" },
+      "deadline":         { "value": "Tuesday",   "source_span": "Confirmation is needed by Tuesday" },
+      "product_interest": { "value": "commercial solar", "source_span": "commercial solar project" }
+    },
+    "missing": ["crew_availability"],
+    "notes": "Partner is asking BEDA to commit a four-person crew. Committing resource is a promise on BEDA's behalf."
+  },
+
+  "E009": {
+    "category": "sales_opportunity",
+    "fields": {
+      "contact_name":  { "value": "Sam",             "source_span": "Contact: Sam" },
+      "contact_phone": { "value": "0411 999 120",    "source_span": "First supplied mobile: 0411 999 120" },
+      "location":      { "value": "Newcastle",       "source_span": "A Newcastle refrigerated warehouse" },
+      "monthly_spend": { "value": "about $80,000/month", "source_span": "electricity bills are about $80,000/month" },
+      "product_interest": { "value": "solar and operating-cost reduction", "source_span": "asks about solar and other operating-cost reductions" }
+    },
+    "missing": ["company_name", "contact_email", "site_address"],
+    "notes": "High-spend prospect but the company name is not stated, so no CRM record can be created with confidence."
+  },
+
+  "E010": {
+    "category": "sales_opportunity",
+    "fields": {
+      "contact_name":  { "value": "Sam",          "source_span": "A follow-up from Sam" },
+      "contact_phone": { "value": "0411 999 102", "source_span": "corrects the phone number to 0411 999 102" }
+    },
+    "missing": ["new_email_address"],
+    "notes": "Correction to the phone number supplied in the previous message. A new email identity is requested but the address itself was not supplied."
+  },
+
+  "E011": {
+    "category": "internal_incident",
+    "fields": {
+      "reference_number": { "value": "146 records unsynchronised", "source_span": "146 records remain unsynchronised" },
+      "timeline":         { "value": "02:14", "source_span": "the HubSpot sync failed at 02:14" },
+      "blocker":          { "value": "connection credential expired", "source_span": "after its connection credential expired" }
+    },
+    "missing": [],
+    "notes": "Internal systems incident, not a customer enquiry. Credential expiry cannot be fixed by retrying."
+  },
+
+  "E012": {
+    "category": "sales_opportunity",
+    "fields": {
+      "sites":            { "value": "70 square metres", "source_span": "leases 70 square metres" },
+      "monthly_spend":    { "value": "about $900/month", "source_span": "spends about $900/month on electricity" },
+      "product_interest": { "value": "solar quote",      "source_span": "asks for a solar quote" },
+      "blocker":          { "value": "landlord has not agreed to roof works", "source_span": "says the landlord has not agreed to roof works" }
+    },
+    "missing": ["company_name", "contact_name", "contact_email", "site_address"],
+    "notes": "Small leased premises with an unresolved landlord consent blocker. Low commercial value relative to effort."
+  }
+}

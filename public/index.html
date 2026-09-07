@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BEDA enquiry triage — review</title>
+<style>
+  :root {
+    --bg:#f6f7f9; --panel:#fff; --line:#dfe3ea; --ink:#1c2430; --muted:#69707d;
+    --blue:#2f5d9e; --amber:#b07d1a; --red:#b03a3a; --green:#2f7d4f;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+         background:var(--bg); color:var(--ink); }
+  header { background:var(--panel); border-bottom:1px solid var(--line); padding:14px 20px;
+           display:flex; align-items:baseline; gap:14px; }
+  header h1 { font-size:16px; margin:0; }
+  header span { color:var(--muted); font-size:13px; }
+  header button { margin-left:auto; }
+  button { font:inherit; padding:5px 11px; border:1px solid var(--line); background:#fff;
+           border-radius:5px; cursor:pointer; }
+  button:hover { border-color:#b9c0cc; }
+  .layout { display:grid; grid-template-columns:340px 1fr; gap:16px; padding:16px; align-items:start; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:7px; }
+  .list { max-height:calc(100vh - 110px); overflow:auto; }
+  .row { padding:10px 12px; border-bottom:1px solid var(--line); cursor:pointer; }
+  .row:hover { background:#f2f5fa; }
+  .row.active { background:#eaf0fa; border-left:3px solid var(--blue); padding-left:9px; }
+  .row .id { font-weight:600; }
+  .row .meta { color:var(--muted); font-size:12px; margin-top:2px; }
+  .tag { display:inline-block; font-size:11px; padding:1px 7px; border-radius:10px;
+         border:1px solid var(--line); background:#f4f6f9; color:var(--muted); }
+  .tag.pend { border-color:#e3cf9a; background:#fdf6e6; color:var(--amber); }
+  .tag.block { border-color:#e6bcbc; background:#fdeeee; color:var(--red); }
+  .detail { padding:18px 20px; }
+  .detail h2 { margin:0 0 2px; font-size:17px; }
+  .sub { color:var(--muted); font-size:13px; margin-bottom:16px; }
+  h3 { font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted);
+       margin:20px 0 8px; }
+  .body { white-space:pre-wrap; background:#fafbfc; border:1px solid var(--line);
+          border-radius:5px; padding:11px; font-size:13px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--muted); font-weight:600; font-size:12px; }
+  .span { color:var(--muted); font-size:12px; font-style:italic; }
+  .miss { color:var(--amber); }
+  .card { border:1px solid var(--line); border-radius:6px; padding:10px 12px; margin-bottom:8px; }
+  .card.await { border-left:3px solid var(--amber); }
+  .card.block { border-left:3px solid var(--red); }
+  .card.exec  { border-left:3px solid var(--green); }
+  .card .top { display:flex; gap:8px; align-items:center; }
+  .card .top b { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px; }
+  .card .why { color:var(--muted); font-size:12.5px; margin-top:4px; }
+  .acts { margin-left:auto; display:flex; gap:6px; }
+  .draft { white-space:pre-wrap; background:#fafbfc; border:1px dashed var(--line);
+           border-radius:5px; padding:10px; font-size:13px; margin-top:8px; }
+  .audit { font-size:12.5px; }
+  .audit td { padding:4px 8px; }
+  .audit .st { color:var(--blue); font-family:ui-monospace,Menlo,Consolas,monospace; }
+  .empty { color:var(--muted); padding:40px; text-align:center; }
+</style>
+</head>
+<body>
+<header>
+  <h1>BEDA enquiry triage</h1>
+  <span id="counts"></span>
+  <button onclick="rerun()">Re-run pipeline</button>
+</header>
+
+<div class="layout">
+  <div class="panel list" id="list"></div>
+  <div class="panel"><div class="detail" id="detail"><div class="empty">Select an enquiry</div></div></div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+let current = null;
+
+const esc = (s) => String(s ?? '').replace(/[&<>]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+async function loadList() {
+  const rows = await (await fetch('/api/enquiries')).json();
+  const pend = rows.reduce((n, r) => n + r.pending, 0);
+  const blk  = rows.reduce((n, r) => n + r.blocked, 0);
+  $('counts').textContent = `${rows.length} enquiries · ${pend} awaiting approval · ${blk} blocked`;
+  $('list').innerHTML = rows.map((r) => `
+    <div class="row ${r.id === current ? 'active' : ''}" onclick="open_('${r.id}')">
+      <div class="id">${r.id} <span class="tag">${esc(r.category ?? 'unclassified')}</span></div>
+      <div class="meta">${esc(r.from_email || r.channel)} · ${esc(r.status)}</div>
+      <div class="meta">
+        ${r.pending ? `<span class="tag pend">${r.pending} awaiting approval</span>` : ''}
+        ${r.blocked ? `<span class="tag block">${r.blocked} blocked</span>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function fieldRows(fields) {
+  const keys = Object.keys(fields);
+  if (!keys.length) return '<p class="sub">No fields extracted.</p>';
+  return `<table><tr><th>Field</th><th>Value</th><th>Traced to</th></tr>` + keys.map((k) => {
+    const f = fields[k];
+    const val = f.unverified
+      ? '<span class="miss">dropped — span not found in the message</span>'
+      : esc(f.value);
+    return `<tr><td>${esc(k)}</td><td>${val}</td><td class="span">${esc(f.source_span ?? '')}</td></tr>`;
+  }).join('') + '</table>';
+}
+
+function actionCard(a) {
+  const cls = a.state === 'awaiting_approval' ? 'await' : a.state === 'blocked' ? 'block'
+            : a.state === 'executed' ? 'exec' : '';
+  const buttons = a.state === 'awaiting_approval'
+    ? `<div class="acts">
+         <button onclick="decide(${a.id}, 'approve', '${a.approval_token}')">Approve</button>
+         <button onclick="decide(${a.id}, 'reject', '${a.approval_token}')">Reject</button>
+       </div>` : '';
+  const draft = a.payload?.draft ? `<div class="draft">${esc(a.payload.draft)}</div>` : '';
+  return `<div class="card ${cls}">
+    <div class="top"><b>${esc(a.type)}</b>
+      <span class="tag ${cls === 'await' ? 'pend' : cls === 'block' ? 'block' : ''}">${esc(a.state)}</span>
+      <span class="tag">${esc(a.policy_level)}</span>${buttons}</div>
+    ${a.approved_by ? `<div class="why">resolved by ${esc(a.approved_by)}</div>` : ''}
+    ${draft}
+  </div>`;
+}
+
+async function open_(id) {
+  current = id;
+  const d = await (await fetch(`/api/enquiries/${id}`)).json();
+  const e = d.enquiry, x = d.extraction;
+
+  $('detail').innerHTML = `
+    <h2>${e.id} — ${esc(x?.category ?? 'unclassified')}</h2>
+    <div class="sub">${esc(e.from_email || 'no sender address supplied')} · ${esc(e.channel)}
+      · provenance: ${esc(e.provenance)} · status: ${esc(e.status)}</div>
+
+    <h3>Message as supplied</h3>
+    <div class="body">${e.subject ? `<b>${esc(e.subject)}</b>\n\n` : ''}${esc(e.body)}</div>
+    ${e.attachments.length ? `<div class="sub" style="margin-top:6px">Attachments referenced: ${e.attachments.map(esc).join(', ')}</div>` : ''}
+
+    ${x ? `<h3>Extraction <span class="tag">${esc(x.mode)} · ${esc(x.model)}</span></h3>
+    ${fieldRows(x.fields)}
+    ${x.missing.length ? `<p class="sub miss">Missing before anyone can act: ${x.missing.map(esc).join(', ')}</p>` : ''}
+    <p class="sub">${esc(x.notes)}</p>` : ''}
+
+    <h3>Identity and duplicates</h3>
+    ${d.matches.length ? `<table><tr><th>Target</th><th>Method</th><th>Decision</th><th>Why</th></tr>` +
+      d.matches.map((m) => `<tr><td>${esc(m.target_id)}</td><td>${esc(m.method)}</td>
+        <td>${esc(m.decision)}</td><td class="span">${esc(m.rationale)}</td></tr>`).join('') + '</table>'
+      : '<p class="sub">No matches.</p>'}
+
+    <h3>Actions</h3>
+    ${d.actions.length ? d.actions.map(actionCard).join('') : '<p class="sub">No actions.</p>'}
+
+    <h3>Audit trail</h3>
+    <table class="audit">${d.audit.map((a) => `<tr>
+      <td class="st">${esc(a.stage)}</td><td><b>${esc(a.event)}</b><br><span class="span">${esc(a.reason ?? '')}</span></td>
+    </tr>`).join('')}</table>`;
+  loadList();
+}
+
+async function decide(id, what, token) {
+  const body = { token, approver: 'reviewer@beda' };
+  if (what === 'reject') body.reason = prompt('Reason for rejecting?') || 'no reason given';
+  const res = await fetch(`/api/actions/${id}/${what}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+  });
+  if (!res.ok) alert((await res.json()).error);
+  open_(current);
+}
+
+async function rerun() {
+  await fetch('/api/run', { method: 'POST' });
+  current = null;
+  $('detail').innerHTML = '<div class="empty">Select an enquiry</div>';
+  loadList();
+}
+
+loadList();
+</script>
+</body>
+</html>

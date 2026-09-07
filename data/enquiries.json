@@ -1,0 +1,122 @@
+[
+  {
+    "id": "E001",
+    "channel": "email",
+    "provenance": "raw_email",
+    "from_name": "Amelia Grant",
+    "from_email": "amelia.grant@humelogistics.example",
+    "subject": "Solar and battery across our three Victorian sites",
+    "body": "We operate warehouses in Truganina, Dandenong and Epping. Combined electricity consumption is about 2.1 GWh per year. We are considering solar, possibly batteries and lighting upgrades. We would like an initial discussion next week. I have attached the latest Truganina bill. Please call me on 0400 111 020.",
+    "attachments": ["01_hume_energy_bill.txt"]
+  },
+  {
+    "id": "E002",
+    "channel": "web_form",
+    "provenance": "raw_email",
+    "from_name": null,
+    "from_email": "a.grant@humelogistics.example",
+    "subject": "Website enquiry",
+    "body": "Company: Hume Logistic. We have three distribution sites in Melbourne and want a solar proposal. Consumption around two gigawatt hours annually. Contact Amelia. Best number 0400 111 020.",
+    "attachments": []
+  },
+  {
+    "id": "E003",
+    "channel": "email",
+    "provenance": "raw_email",
+    "from_name": "Rohan Lee",
+    "from_email": "rohan@greenfieldsfoods.example",
+    "subject": "Invoice 1847 does not match PO",
+    "body": "Hi, our accounts team says invoice 1847 is $2,640 higher than the purchase order. Can someone check before Friday please? This is for the lighting project already completed at Geelong.",
+    "attachments": ["03_greenfields_invoice_query.txt"]
+  },
+  {
+    "id": "E004",
+    "channel": "email",
+    "provenance": "raw_email",
+    "from_name": null,
+    "from_email": "sales@megaleadlists.example",
+    "subject": "Buy 50,000 Australian CEO leads today",
+    "body": "Special price expires in 24 hours. Reply now for cryptocurrency payment instructions.",
+    "attachments": []
+  },
+  {
+    "id": "E005",
+    "channel": "email",
+    "provenance": "raw_email",
+    "from_name": "Melissa Tran",
+    "from_email": "melissa.tran@northbankcollege.example",
+    "subject": "Government school lighting upgrade",
+    "body": "I manage facilities at Northbank College. We have approximately 1,100 fluorescent fittings and want to understand whether an LED upgrade could access any government incentives. I do not have our latest electricity bill with me. Could someone tell me what you need from us?",
+    "attachments": ["02_northbank_site_notes.txt"]
+  },
+  {
+    "id": "E006",
+    "channel": "email",
+    "provenance": "raw_email",
+    "from_name": null,
+    "from_email": "engineering@solarray.example",
+    "subject": "Harmonics question on proposed battery inverter",
+    "body": "We are reviewing the PCS specification on a 500 kW battery project. Can your engineer confirm acceptable THD limits at the point of common coupling and whether the current design requires an additional harmonic study?",
+    "attachments": []
+  },
+  {
+    "id": "E007",
+    "channel": "email",
+    "provenance": "supplied_as_description",
+    "from_name": null,
+    "from_email": "priya.dev@examplemail.test",
+    "subject": null,
+    "body": "A marketing internship application from priya.dev@examplemail.test. It is not a sales or support enquiry.",
+    "attachments": []
+  },
+  {
+    "id": "E008",
+    "channel": "email",
+    "provenance": "supplied_as_description",
+    "from_name": "Daniel Wu",
+    "from_email": null,
+    "subject": null,
+    "body": "Existing installation partner Daniel Wu asks whether BEDA will confirm a four-person crew for a Ballarat commercial solar project for the week beginning 14 September. Confirmation is needed by Tuesday.",
+    "attachments": []
+  },
+  {
+    "id": "E009",
+    "channel": "email",
+    "provenance": "supplied_as_description",
+    "from_name": "Sam",
+    "from_email": null,
+    "subject": null,
+    "body": "A Newcastle refrigerated warehouse says electricity bills are about $80,000/month and asks about solar and other operating-cost reductions. Contact: Sam. First supplied mobile: 0411 999 120.",
+    "attachments": []
+  },
+  {
+    "id": "E010",
+    "channel": "email",
+    "provenance": "supplied_as_description",
+    "from_name": "Sam",
+    "from_email": null,
+    "subject": null,
+    "body": "A follow-up from Sam corrects the phone number to 0411 999 102 and asks BEDA to use a new email identity going forward. Preserve the conflict and make an explicit identity-resolution decision.",
+    "attachments": []
+  },
+  {
+    "id": "E011",
+    "channel": "internal_alert",
+    "provenance": "supplied_as_description",
+    "from_name": "BEDA system alert",
+    "from_email": null,
+    "subject": null,
+    "body": "An internal BEDA system alert says the HubSpot sync failed at 02:14 after its connection credential expired. 146 records remain unsynchronised and automatic retry was disabled after three failures. Treat this as an internal systems incident, not a customer enquiry.",
+    "attachments": []
+  },
+  {
+    "id": "E012",
+    "channel": "web_form",
+    "provenance": "supplied_as_description",
+    "from_name": null,
+    "from_email": null,
+    "subject": null,
+    "body": "A small cafe leases 70 square metres, spends about $900/month on electricity, asks for a solar quote, and says the landlord has not agreed to roof works.",
+    "attachments": []
+  }
+]
